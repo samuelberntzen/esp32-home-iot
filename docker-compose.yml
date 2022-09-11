@@ -1,5 +1,18 @@
 version: '3.1'
 services:
+  db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=sensorReadings
+
   api:
     build: ./api
     command: uvicorn app.main:app --host 0.0.0.0
@@ -8,18 +21,7 @@ services:
     expose: 
       - 8000
     environment:
-      - DATABASE_URL=postgresql://${pg_user}:${pg_password}@db:5432/sensorReadings
-  
-  db:
-    image: postgres:latest
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-    expose:
-      - 5432
-    environment:
-      - POSTGRES_USER=${pg_user}
-      - POSTGRES_PASSWORD=${pg_password}
-      - POSTGRES_DB=sensorReadings
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/sensorReadings
 
 volumes:
   postgres_data:

@@ -26,7 +26,7 @@ Adafruit_SSD1306 display(-1);
 // Millis specifications for timing
 unsigned long startMillis;  //some global variables available anywhere in the program
 unsigned long currentMillis;
-const unsigned long period = 10000;  //the value is a number of milliseconds
+const unsigned long period = 600000 ;  //the value is a number of milliseconds
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
@@ -34,6 +34,7 @@ const int   daylightOffset_sec = 0; // Use UTC time
 
 // Instantiate HTTP Client
 HTTPClient http;
+WiFiClient client;  // or WiFiClientSecure for HTTPS
 
 void blinkLed() {
   digitalWrite(ONBOARD_LED,HIGH);
@@ -76,7 +77,7 @@ void makePostRequestTemperature(String time, float tempCelsius, float humid) {
   // Create JSON
   DynamicJsonDocument doc(2048);
 
-  doc["utcTime"] = String(time);
+  doc["dateTimeUtc"] = String(time);
   doc["temperatureCelcius"] = tempCelsius;
   doc["humidityPercentage"] = humid;
 
@@ -84,23 +85,12 @@ void makePostRequestTemperature(String time, float tempCelsius, float humid) {
   String requestBody;
   serializeJson(doc, requestBody);
 
-  WiFiClient client;  // or WiFiClientSecure for HTTPS
-  HTTPClient http;
-
   // Send request
-  String requestPath = apiBaseUrl + "/temperature/readings/";
+  String requestPath = apiBaseUrl + "/temperature/readings/add";
   http.begin(client, requestPath);
   http.addHeader("Content-Type", "application/json");  
+
   int httpResponseCode  = http.POST(requestBody);
-
-  Serial.println(http.errorToString(httpResponseCode ).c_str());
-
-  // Close connection
-  http.end();
-
-  // Print request body to Serial
-  Serial.println(requestBody);
-
 }
 
 void setup() {
@@ -156,9 +146,9 @@ void loop() {
       tempCelsius, 
       humid
       );
+    blinkLed();
     startMillis = currentMillis;  // Update time
   }
-
 
   // Display Text
 	display.setTextSize(1);

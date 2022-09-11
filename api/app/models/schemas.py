@@ -1,19 +1,23 @@
-# TODO: Add schema for temperature table 
+from pydantic import BaseModel
+import datetime 
 
-from typing import Optional
-from datetime import datetime
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Float
+class TemperatureReadingsBase(BaseModel):
+    class Config:
+        orm_mode = True
 
-# from sqlmodel import Field, Session, SQLModel, create_engine, select
-from app.database.db import Base
+class TemperatureReadingsCreate(TemperatureReadingsBase):
+    dateTimeUtc: str
+    temperatureCelcius: float
+    humidityPercentage: float
 
-temperature_schemaname = "temperature"
+class TemperatureReadingsGet(TemperatureReadingsCreate):
+    id: int
 
-class TemperatureReadings(Base):
+class TemperatureReadingsDelete(TemperatureReadingsBase):
+    start_date: str
+    end_date: str
 
-    __table_args__ = {"schema": temperature_schemaname}
-    __tablename__ = "temperatureReadings"
 
-    dateTimeUTC = Column(String, primary_key=True, index=True)
-    temperatureCelsius = Column(float, unique=False, index=False)
-    humidityPercentage = Column(float, unique=False, index=False)
+class fireSensorReadings(BaseModel):
+    dateTimeUtc: str
+    isFire: int

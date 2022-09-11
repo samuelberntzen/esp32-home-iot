@@ -1,21 +1,34 @@
 from sqlalchemy.orm import Session
-from api.app.models.models import TemperatureReadings
-from app.models import models, schemas
+from app.models import schemas, models 
+from app.database import db
 
 
-def get_temperature_readings(db: Session, from_time: str): # Add to_time for filtering 
-     return db.query(models.TemperatureReadings).all()
+def get_temperature_readings(db: Session): # Add to_time for filtering 
 
-def insert_temperature_readings(db: Session, schema: schemas.TemperatureReadings):
-    temperature_readings = models.TemperatureReadings(
-        dateTimeUTC=schemas.utcTime, 
-        temperatureCelsius = schemas.temperatureCelsius, 
-        humidityPercentage = schemas.humidityPercentage
-        )
+    data = db.query(models.TemperatureReadings).all()
+
+    return data 
+
+def insert_temperature_readings(db: Session, item: schemas.TemperatureReadingsCreate):
+
+    db_item = models.TemperatureReadings(
+        dateTimeUtc = item.dateTimeUtc,
+        temperatureCelsius = item.temperatureCelcius,
+        humidityPercentage = item.humidityPercentage
+    )
 
     # Insert to database
-    db.add(temperature_readings)
+    db.add(db_item)
     db.commit()
-    db.refresh(temperature_readings)
+    db.refresh(db_item)
 
+def delete_temperature_reading_from_date(db: Session, item: schemas.TemperatureReadingsDelete):
+
+    db.query(models.TemperatureReadings).filter(
+        models.TemperatureReadings.dateTimeUtc >= item.start_date).filter(
+            models.TemperatureReadings.dateTimeUtc <= item.end_date
+        ).delete()
+
+    db.commit()
+     
 
