@@ -16,6 +16,7 @@ services:
   api:
     build: ./api
     command: uvicorn app.main:app --host 0.0.0.0
+    restart: always
     ports:
       - 6060:6060 
     expose: 
