@@ -4,6 +4,9 @@ from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.middleware.cors import CORSMiddleware
+import os 
+import uvicorn
+
 
 from app.models import models
 from app.database import db
