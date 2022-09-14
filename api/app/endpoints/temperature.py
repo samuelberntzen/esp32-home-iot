@@ -1,12 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from app.models import models, schemas 
-from app.database.crud import insert_temperature_readings, get_temperature_readings, delete_temperature_reading_from_date
+from app.database import crud
 from app.database import db 
 import datetime
-
-
-# TEST
 from app.config import settings 
 
 router = APIRouter(
@@ -24,31 +21,55 @@ async def read_root() -> dict:
     """
     return {"connection": "successfull"}
 
-@router.get("/readings/read", response_model = list)
-async def get_readings(db = Depends(db.get_db)):
+@router.get("/read/all/", response_model = list)
+async def get_readings_all(db = Depends(db.get_db)):
     """_placeholder_
 
     Args:
         response_payload (schemas.TemperatureReadingsGet): _description_
     """
 
-    data = get_temperature_readings(db = db)
+    data = crud.get_temperature_readings_all(db = db)
 
     return data
 
-@router.post("/readings/add")
-async def load_readings(readings_payload: schemas.TemperatureReadingsCreate, db = Depends(db.get_db)):
+@router.get("/read/latest/")
+async def get_readings_latest(db = Depends(db.get_db)):
+    """_placeholder_
+
+    Args:
+        response_payload (schemas.TemperatureReadingsGet): _description_
+    """
+
+    data = crud.get_temperature_readings_latest(db = db)
+
+    return data
+
+@router.get("/read/date/")
+async def get_readings_date(item: schemas.TemperatureReadingsDate, db = Depends(db.get_db)):
+    """_placeholder_
+
+    Args:
+        response_payload (schemas.TemperatureReadingsGet): _description_
+    """
+
+    data = crud.get_temperature_readings_date(item = item, db = db)
+
+    return data
+
+@router.post("/add/")
+async def add_readings(item: schemas.TemperatureReadingsCreate, db = Depends(db.get_db)):
     """Loads payload data into the database, returns the payload for verification
 
     Returns:
         dict: Original payload for verification purposes
     """
 
-    insert_temperature_readings(db = db, item = readings_payload)
+    crud.insert_temperature_readings(db = db, item = item)
 
-    return readings_payload 
+    return item 
 
-@router.post("/readings/delete/date", response_model = dict)
+@router.post("/delete/date", response_model = dict)
 async def delete_readings_from_date(date_payload: schemas.TemperatureReadingsDelete, db = Depends(db.get_db)):
     """Deletes rows from TemperatureReadings table between two specific dates
 
@@ -62,7 +83,7 @@ async def delete_readings_from_date(date_payload: schemas.TemperatureReadingsDel
 
     print(date_payload)
 
-    delete_temperature_reading_from_date(db = db, item = date_payload)
+    crud.delete_temperature_reading_from_date(db = db, item = date_payload)
 
     return {
         "message": f"Successfully deleted object between {date_payload.start_date} and {date_payload.end_date} from database"

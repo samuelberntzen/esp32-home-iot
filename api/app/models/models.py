@@ -17,25 +17,3 @@ class TemperatureReadings(Base):
     dateTimeUtc = Column(TIMESTAMP, primary_key = False, index = True)
     temperatureCelsius = Column(FLOAT)
     humidityPercentage = Column(FLOAT)
-
-
-    # __tablename__ = "temperatureReadings"
-    # __sa_dataclass_metadata_key__ = "sensorReadings"
-
-    # id: INTEGER = field(
-    #     init = False,
-    #     metadata  = {"sensorReadings": Column(INTEGER, primary_key = True, unique = True)}
-    # )
-
-    # dateTimeUtc: TIMESTAMP = field(
-    #     init = False, 
-    #     metadata={"sensorReadings": Column(TIMESTAMP)},
-    # )
-
-    # temperatureCelsius: FLOAT = field(
-    #     metadata = {"sensorReadings": Column(FLOAT)}
-    # )
-
-    # humidityPercentage: FLOAT = field(
-    #     metadata = {"sensorReadings": Column(FLOAT)}
-    # )

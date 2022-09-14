@@ -17,6 +17,8 @@ class TemperatureReadingsDelete(TemperatureReadingsBase):
     start_date: str
     end_date: str
 
+class TemperatureReadingsDate(TemperatureReadingsDelete):
+    pass 
 
 class fireSensorReadings(BaseModel):
     dateTimeUtc: str

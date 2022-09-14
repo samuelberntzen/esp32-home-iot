@@ -3,9 +3,24 @@ from app.models import schemas, models
 from app.database import db
 
 
-def get_temperature_readings(db: Session): # Add to_time for filtering 
+def get_temperature_readings_all(db: Session): # Add to_time for filtering 
 
     data = db.query(models.TemperatureReadings).all()
+
+    return data 
+
+def get_temperature_readings_latest(db: Session): # Add to_time for filtering 
+
+    data = db.query(models.TemperatureReadings).order_by(models.TemperatureReadings.dateTimeUtc.desc()).first()
+
+    return data
+
+def get_temperature_readings_date(db: Session, item: schemas.TemperatureReadingsDate):
+
+    data = db.query(models.TemperatureReadings).filter(
+        models.TemperatureReadings.dateTimeUtc >= item.start_date).filter(
+            models.TemperatureReadings.dateTimeUtc <= item.end_date
+        ).all()
 
     return data 
 
