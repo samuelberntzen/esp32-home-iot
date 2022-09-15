@@ -72,10 +72,10 @@ def check_password():
         return True
 
 if check_password():
-    st.title("Temperature Dashboard for ESP32 readings")
+    st.title("ESP32 - Temperature & Humidity")
 
     with st.sidebar:
-        st.write("This is a sidebar")
+        st.write("Filters & Refresh")
 
         # TODO: Add date filter
 
@@ -107,10 +107,10 @@ if check_password():
 
     col1, col2 = st.columns(2)
     with col1:
-        st.metric(value = str(latest_data['temperatureCelsius']) +  " C", label ="Current temperature")
+        st.metric(value = str(round(latest_data['temperatureCelsius'], 2)) +  " C", label ="Current temperature")
 
         # Temperature filtered on date
-        temperature_fig = px.line(date_data_df, x = 'dateTimeUtc', y = 'temperatureCelsius', title = 'Temperature, date filtered')
+        temperature_fig = px.line(date_data_df, x = 'dateTimeUtc', y = 'temperatureCelsius', title = 'Temperature 🌡️, date filtered')
         temperature_fig.add_hline(
             y = date_data_df['temperatureCelsius'].mean(),
             line_color = 'Red'
@@ -119,7 +119,7 @@ if check_password():
         st.plotly_chart(temperature_fig, use_container_width=True)
 
         # Temperature timeline 
-        temperature_fig_all = px.line(all_data_df, x = 'dateTimeUtc', y = 'temperatureCelsius', title = 'Temperature')
+        temperature_fig_all = px.line(all_data_df, x = 'dateTimeUtc', y = 'temperatureCelsius', title = 'Temperature 🌡️')
         temperature_fig_all.add_hline(
             y = date_data_df['temperatureCelsius'].mean(),
             line_color = 'Red'
@@ -127,20 +127,20 @@ if check_password():
         st.plotly_chart(temperature_fig_all, use_container_width=True)
 
     with col2:
-        st.metric(value = str(latest_data['humidityPercentage']) + "%", label ="Current humidity")
+        st.metric(value = str(round(latest_data['humidityPercentage'], 2)) + "%", label ="Current humidity")
 
         # Humidity filtered on date
-        humidity_fig = px.line(date_data_df, x = 'dateTimeUtc', y = 'humidityPercentage', title = 'Humidity, date filtered')
+        humidity_fig = px.line(date_data_df, x = 'dateTimeUtc', y = 'humidityPercentage', title = 'Humidity 💦, date filtered')
 
         humidity_fig.add_hline(
-            y = date_data_df['temperatureCelsius'].mean(),
+            y = date_data_df['humidityPercentage'].mean(),
             line_color = 'Red'
         )
 
         st.plotly_chart(humidity_fig, use_container_width=True)
 
         # Humidity timeline 
-        humidity_all_fig = px.line(all_data_df, x = 'dateTimeUtc', y = 'humidityPercentage', title = 'Humidity')
+        humidity_all_fig = px.line(all_data_df, x = 'dateTimeUtc', y = 'humidityPercentage', title = 'Humidity 💦')
         humidity_all_fig.add_hline(
             y = date_data_df['temperatureCelsius'].mean(),
             line_color = 'Red'

@@ -86,7 +86,7 @@ void makePostRequestTemperature(String time, float tempCelsius, float humid) {
   serializeJson(doc, requestBody);
 
   // Send request
-  String requestPath = apiBaseUrl + "/temperature/add";
+  String requestPath = apiBaseUrl + "/temperature/add/";
   http.begin(client, requestPath);
   http.addHeader("Content-Type", "application/json");  
 
