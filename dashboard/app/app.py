@@ -98,10 +98,8 @@ if check_password():
             on_click = refresh_data()
             )
 
-    all_data_df = pd.DataFrame.from_records(all_data).sort_values(by = "dateTimeUtc")
-    date_data_df = pd.DataFrame.from_records(date_data).sort_values(by = "dateTimeUtc")
-
-
+    all_data_df = pd.DataFrame.from_records(all_data).sort_values(by = ['dateTimeUtc'])
+    date_data_df = pd.DataFrame.from_records(date_data).sort_values(by = ['dateTimeUtc'])
 
     st.metric(value = str(datetime.datetime.strptime(str(latest_data['dateTimeUtc']), time_format)),label ="Latest reading")
 
