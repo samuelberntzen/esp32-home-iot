@@ -24,9 +24,9 @@ Adafruit_SSD1306 display(-1);
 
 
 // Millis specifications for timing
-unsigned long startMillis;  //some global variables available anywhere in the program
+unsigned long startMillis; 
 unsigned long currentMillis;
-const unsigned long period = 600000 ;  //the value is a number of milliseconds
+const unsigned long period = 450000;  // Milliseconds
 
 const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 0;
@@ -93,6 +93,31 @@ void makePostRequestTemperature(String time, float tempCelsius, float humid) {
   int httpResponseCode  = http.POST(requestBody);
 }
 
+// Function for waiting until top of the hour (for those of us with some degree of OCD)
+int calculateDelay(){
+  // Do not continue until time is either 00, 15, 30 or 45 minutes on the hour
+  // Check current time 
+  String currentTime = getCurrentTime();
+
+  // Check number of minutes on the hour
+  String minutes = currentTime.substring(14, 16);
+  String seconds = currentTime.substring(17, 19);
+
+  // Convert values to int and then milliseconds
+  int numMinutes = minutes.toInt();
+  int numSeconds = seconds.toInt();
+
+  // Delay for required amount of time 
+  // Delay should be 60 minutes, minus the time elapsed from the top of the hour (e.g. time remaining of that hour)
+
+  int hourMillis = 3600000;  // One hour in milliseconds
+  int passedMillis = numMinutes*60000 + numSeconds*1000;  // Milliseconds since last hour
+
+  int delayTime = hourMillis - passedMillis;
+
+  return delayTime;
+}
+
 void setup() {
 
   // Initializations
@@ -126,10 +151,15 @@ void setup() {
 
 	// Clear the buffer.
 	display.clearDisplay();
+
+  // Delay for required time
+  int delayTime = calculateDelay();
+  Serial.println("Delaying for\t" + String(delayTime/1000) + " seconds");
+  delay(delayTime);
+  Serial.println("Delay completed, starting sensor...");
 }
 
 void loop() {
-  
 
   // Time variables
   String currentTime = getCurrentTime();  // Current time in UTC
